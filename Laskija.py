@@ -65,25 +65,25 @@ def laske(string): #Tämä funtkio laskee lausekkeen.
             string = string[:i] + "*" + string[i:]
     print(string)
 
-    def käsittele_negatiiviset(string):  # vyöryttää kerto tai jakolaskua seuraavan miinuksen laskun eteen
+    def kasittele_negatiiviset(string):  # vyöryttää kerto tai jakolaskua seuraavan miinuksen laskun eteen
         while True:
             string = string.replace("*+", "*").replace("/+", "+")
             jii = max(string.find("*-"), string.find("/-"))
             if jii == -1:
                 break
 
-            edeltäväOperaattori = None
+            edeltavaOperaattori = None
             for i, char in enumerate(string):
                 if char in ("+", "-"):
-                    edeltäväOperaattori = char
-                    edeltäväOperaattori_index = i
+                    edeltavaOperaattori = char
+                    edeltavaOperaattori_index = i
 
                 if i >= jii:
-                    if edeltäväOperaattori is not None:
-                        if edeltäväOperaattori == "+":
-                            string = string[:edeltäväOperaattori_index] + "-" + string[edeltäväOperaattori_index + 1:]
+                    if edeltavaOperaattori is not None:
+                        if edeltavaOperaattori == "+":
+                            string = string[:edeltavaOperaattori_index] + "-" + string[edeltavaOperaattori_index + 1:]
                         else:
-                            string = string[:edeltäväOperaattori_index] + "+" + string[edeltäväOperaattori_index + 1:]
+                            string = string[:edeltavaOperaattori_index] + "+" + string[edeltavaOperaattori_index + 1:]
                         string = string[:jii + 1] + string[jii + 2:]
                     else:
                         string = "-" + string
@@ -95,7 +95,7 @@ def laske(string): #Tämä funtkio laskee lausekkeen.
     #SULUT: Eivät toimi vielä kunnolla, joten eivät mukana lopullisessa laskimessa.
 
     while True:  # poistetaan sulut yksi kerrallaan laskemalla sulkujen sisältö
-        string = käsittele_negatiiviset(string)
+        string = kasittele_negatiiviset(string)
 
         for i, char in enumerate(string):
 
