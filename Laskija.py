@@ -1,9 +1,9 @@
 import re
 
 
-def do_basic_operations(string):
-    operatorsfirst = ("*", "/")
-    operatorslast = ("+", "-")
+def perusoperaatio(string): #Määrittelee operaatiot.
+    operaattorieka = ("*", "/") #Ensimmäisessä järjestyksessä olevat operaatiot
+    operaattoritoka = ("+", "-") #Toisena järjestyksessä olevat operaatiot
 
     string = re.split('(\W)', string)  # luvut ja operaattorit listaksi
 
@@ -14,22 +14,23 @@ def do_basic_operations(string):
         if char == ".":
             string[i - 1:i + 2] = ["".join(string[i - 1:i + 2])]
 
-    def to_int(symbol):
+    def to_int(symboli):
         try:
-            symbol = float(symbol)
+            symboli = int(symboli)
         except ValueError:
             pass
-        return symbol
+        return symboli
 
-    string = list(map(to_int, string))  # muutetaan numerot tekstistä floateiksi
+    string = list(map(to_int, string))  # muutetaan numerot tekstistä
 
-    if type(string[0]) is not float:  # yhdistetään mahdollinen ensimmäistä lukua edeltävä miinus siihen
-        string[1] = - string[1]
+    if type(string[0]) is not int:  # yhdistetään mahdollinen ensimmäistä lukua edeltävä miinus siihen
+        if string[0] == "-":
+            string[1] = - string[1]
         del string[0]
 
     while True:  # tehdään kerto ja jakolaskut
         for i, char in enumerate(string):
-            if char in operatorsfirst:
+            if char in operaattorieka:
                 if char == "*":
                     string[i - 1:i + 2] = [string[i - 1] * string[i + 1]]
                 else:
@@ -40,7 +41,7 @@ def do_basic_operations(string):
 
     while True:  # tehdään plus ja miinuslaskut
         for i, char in enumerate(string):
-            if char in operatorslast:
+            if char in operaattoritoka:
                 if char == "+":
                     string[i - 1:i + 2] = [string[i - 1] + string[i + 1]]
                 else:
@@ -52,25 +53,37 @@ def do_basic_operations(string):
     return str(string[0])
 
 
-def calculate(string):
-    def handle_negatives(string):  # vyöryttää kerto tai jakolaskua seuraavan miinuksen laskun eteen
+
+def laske(string): #Tämä funtkio laskee lausekkeen.
+    operators = ("+", "-", "*", "/", "^")
+    string = string.replace(" ", "")  # käyttäjä voi jättää halutessaan välejä lausekkeeseen
+
+    for i in range(1, len(string)):  # mahdollistaa kertomerkin poisjätön sulkujen yhteydessä
+        if string[i] == ")" and string[i + 1] not in operators and string[i + 1] != ")":
+            string = string[:i + 1] + "*" + string[i + 1:]
+        elif string[i] == "(" and string[i - 1] not in operators and string[i - 1] != "(":
+            string = string[:i] + "*" + string[i:]
+    print(string)
+
+    def käsittele_negatiiviset(string):  # vyöryttää kerto tai jakolaskua seuraavan miinuksen laskun eteen
         while True:
+            string = string.replace("*+", "*").replace("/+", "+")
             jii = max(string.find("*-"), string.find("/-"))
             if jii == -1:
                 break
 
-            previous_operator = None
+            edeltäväOperaattori = None
             for i, char in enumerate(string):
                 if char in ("+", "-"):
-                    previous_operator = char
-                    previous_operator_index = i
+                    edeltäväOperaattori = char
+                    edeltäväOperaattori_index = i
 
-                if i == jii:
-                    if previous_operator is not None:
-                        if previous_operator == "+":
-                            string = string[:previous_operator_index] + "-" + string[previous_operator_index + 1:]
+                if i >= jii:
+                    if edeltäväOperaattori is not None:
+                        if edeltäväOperaattori == "+":
+                            string = string[:edeltäväOperaattori_index] + "-" + string[edeltäväOperaattori_index + 1:]
                         else:
-                            string = string[:previous_operator_index] + "+" + string[previous_operator_index + 1:]
+                            string = string[:edeltäväOperaattori_index] + "+" + string[edeltäväOperaattori_index + 1:]
                         string = string[:jii + 1] + string[jii + 2:]
                     else:
                         string = "-" + string
@@ -79,21 +92,22 @@ def calculate(string):
                     break
         return string
 
-    string = handle_negatives(string)
+    #SULUT: Eivät toimi vielä kunnolla, joten eivät mukana lopullisessa laskimessa.
 
     while True:  # poistetaan sulut yksi kerrallaan laskemalla sulkujen sisältö
+        string = käsittele_negatiiviset(string)
+
         for i, char in enumerate(string):
 
             if char == "(":
-                last_opening_bracket_index = i
+                viimeinenOperaatioIndeksi = i
 
             if char == ")":
-                string = string.replace(string[last_opening_bracket_index: i + 1],
-                                        do_basic_operations(string[last_opening_bracket_index + 1: i]))
+                string = string.replace(string[viimeinenOperaatioIndeksi: i + 1],
+                                       perusoperaatio(string[viimeinenOperaatioIndeksi + 1: i]))
                 break
         else:
-            string = do_basic_operations(string)
+            string = perusoperaatio(string)
             break
-        print(string)
 
-    return string
+    return string #Palauttaa Stringinä tuloksen
