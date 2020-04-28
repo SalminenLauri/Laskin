@@ -1,6 +1,6 @@
 from tkinter import *
 
-from Laskija import laske
+from Laskija import *
 
 #Tämä tiedosto sisältää laskimen graafiset oliot, joista painikkeet joko syöttävät näyttöön merkkejä tai kutsuvat näytön funktioita.
 

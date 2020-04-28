@@ -1,9 +1,9 @@
 import re
 
 
-def perusoperaatio(string): #Määrittelee operaatiot.
-    operaattorieka = ("*", "/") #Ensimmäisessä järjestyksessä olevat operaatiot
-    operaattoritoka = ("+", "-") #Toisena järjestyksessä olevat operaatiot
+def do_basic_operations(string):
+    operaattorieka = ("*", "/")
+    operaattoritoka = ("+", "-")
 
     string = re.split('(\W)', string)  # luvut ja operaattorit listaksi
 
@@ -14,16 +14,18 @@ def perusoperaatio(string): #Määrittelee operaatiot.
         if char == ".":
             string[i - 1:i + 2] = ["".join(string[i - 1:i + 2])]
 
-    def to_int(symboli):
+    def to_int(symbol):
         try:
-            symboli = int(symboli)
+            symbol = float(symbol)
         except ValueError:
             pass
-        return symboli
+        return symbol
 
-    string = list(map(to_int, string))  # muutetaan numerot tekstistä
 
-    if type(string[0]) is not int:  # yhdistetään mahdollinen ensimmäistä lukua edeltävä miinus siihen
+
+    string = list(map(to_int, string))  # muutetaan numerot tekstistä floateiksi
+
+    if type(string[0]) is not float:  # yhdistetään mahdollinen ensimmäistä lukua edeltävä miinus siihen
         if string[0] == "-":
             string[1] = - string[1]
         del string[0]
@@ -53,61 +55,67 @@ def perusoperaatio(string): #Määrittelee operaatiot.
     return str(string[0])
 
 
-
-def laske(string): #Tämä funtkio laskee lausekkeen.
+def laske(string):
     operators = ("+", "-", "*", "/", "^")
     string = string.replace(" ", "")  # käyttäjä voi jättää halutessaan välejä lausekkeeseen
 
-    for i in range(1, len(string)):  # mahdollistaa kertomerkin poisjätön sulkujen yhteydessä
+    for i  in range(1, len(string)-1):  # mahdollistaa kertomerkin poisjätön sulkujen yhteydessä
         if string[i] == ")" and string[i + 1] not in operators and string[i + 1] != ")":
             string = string[:i + 1] + "*" + string[i + 1:]
         elif string[i] == "(" and string[i - 1] not in operators and string[i - 1] != "(":
             string = string[:i] + "*" + string[i:]
-    print(string)
-
     def käsittele_negatiiviset(string):  # vyöryttää kerto tai jakolaskua seuraavan miinuksen laskun eteen
         while True:
             string = string.replace("*+", "*").replace("/+", "+")
+            string = string.replace("+-", "-").replace("-+", "-").replace("--", "+").replace("++", "+")
             jii = max(string.find("*-"), string.find("/-"))
             if jii == -1:
                 break
 
-            edeltäväOperaattori = None
+            previous_operator = None
             for i, char in enumerate(string):
                 if char in ("+", "-"):
-                    edeltäväOperaattori = char
-                    edeltäväOperaattori_index = i
+                    previous_operator = char
+                    previous_operator_index = i
 
                 if i >= jii:
-                    if edeltäväOperaattori is not None:
-                        if edeltäväOperaattori == "+":
-                            string = string[:edeltäväOperaattori_index] + "-" + string[edeltäväOperaattori_index + 1:]
+                    if previous_operator is not None:
+                        if previous_operator == "+":
+                            string = string[:previous_operator_index] + "-" + string[previous_operator_index + 1:]
                         else:
-                            string = string[:edeltäväOperaattori_index] + "+" + string[edeltäväOperaattori_index + 1:]
+                            string = string[:previous_operator_index] + "+" + string[previous_operator_index + 1:]
                         string = string[:jii + 1] + string[jii + 2:]
                     else:
                         string = "-" + string
                         string = string[:jii + 2] + string[jii + 3:]
 
                     break
+
+
         return string
 
-    #SULUT: Eivät toimi vielä kunnolla, joten eivät mukana lopullisessa laskimessa.
-
+    #Sulut toimivat nyt.
     while True:  # poistetaan sulut yksi kerrallaan laskemalla sulkujen sisältö
         string = käsittele_negatiiviset(string)
+        print(string)
 
         for i, char in enumerate(string):
 
             if char == "(":
-                viimeinenOperaatioIndeksi = i
+                last_opening_bracket_index = i
 
             if char == ")":
-                string = string.replace(string[viimeinenOperaatioIndeksi: i + 1],
-                                       perusoperaatio(string[viimeinenOperaatioIndeksi + 1: i]))
+                string = string.replace(string[last_opening_bracket_index: i + 1],
+                                        do_basic_operations(string[last_opening_bracket_index + 1: i]))
                 break
         else:
-            string = perusoperaatio(string)
+            string = do_basic_operations(string)
             break
 
-    return string #Palauttaa Stringinä tuloksen
+
+    try:
+        string = int(string)
+    except ValueError:
+        pass
+    return string
+
