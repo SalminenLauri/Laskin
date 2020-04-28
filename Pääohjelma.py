@@ -32,6 +32,8 @@ painikePlus = Painike(ikkuna,'+',3,5, naytto)
 painikeMiinus = Painike(ikkuna,'-',3,4, naytto)
 PainikeKerto = Painike(ikkuna,'*',3,3, naytto)
 PainikeJako = Painike(ikkuna,'/',3,2, naytto)
+PainikeAlkuSulku = Painike(ikkuna, '(',0,7,naytto)
+painikeLoppuSulku = Painike(ikkuna,')',1,7, naytto)
 
 #Luodaan painike, joka muuttaa lausekkeen negatiivisesta positiiviseksi ja toisin päin.
 painikeAlkuunMiinus = NegPosPainike(ikkuna, '+/-',0,5,naytto)

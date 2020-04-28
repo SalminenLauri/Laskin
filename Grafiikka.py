@@ -32,9 +32,9 @@ class YhteensaPainike(Painike): #Painike, joka käynnistää näytöstä laske()
         self.nimi = nimi
         self.column = column
         self.row = row
-        painike = Button(self.kehys, text=self.nimi, font="Arial", width=9, height=0, pady=2,
+        painike = Button(self.kehys, text=self.nimi, font="Arial", width=9, height=3, pady=2,
                          command=lambda: naytto.yhteensa())
-        painike.grid(column=self.column, row=self.row, columnspan=2)
+        painike.grid(column=self.column, row=self.row, columnspan=2,rowspan=2)
 
 class NegPosPainike(Painike): #Lisaa näytön lausekkeen alkuun miinuksen, jos lause on positiivinen tai poistaa sen, jos sellainen jo on. Jos alussa on jokin muu merkki ei tee mitään.
     # Toimii kutsumalla näytön negpos() funktiota.
@@ -88,12 +88,18 @@ class Naytto: #Näyttö näyttää tämänhetkisen lausekkeen ja olion hoitaa my
         self.lauseke.set(yhdessa)
 
     def yhteensa(self): #Laskee näytön lausekkeen kutsumalla laske()-funktiota. Palauttaa tekstin "ERROR", jos tässä tapahtuu virhe. Alunperin käytettiin Python eval() funtkiota, mutta
-        #päätimme toteuttaa oman funtkion sekä harjoituksen vuoksi että koska eval() on turvallisuuden takia ongelmallinen. 
+        #päätimme toteuttaa oman funtkion sekä harjoituksen vuoksi että koska eval() on turvallisuuden takia ongelmallinen.
         try:
             yhteensa = laske(self.lauseke.get())
+            yhteensa = re.sub("\\.0$","", yhteensa) ##Poistaa lopusta ".0", koska se on turha tämä helpompaa kuin pelata tyyppimuunnosten kanssa."
             self.lauseke.set(yhteensa)
         except:
-            self.lauseke.set("ERROR")
+            testi=self.lauseke.get()
+            if len(testi)!=0:
+                self.lauseke.set("ERROR")
+            else:
+                self.lauseke.set("")
+
 
     def pyyhi(self): #Pyyhkii näytön.
         self.lauseke.set("")

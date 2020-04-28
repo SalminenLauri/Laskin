@@ -97,7 +97,6 @@ def laske(string):
     #Sulut toimivat nyt.
     while True:  # poistetaan sulut yksi kerrallaan laskemalla sulkujen sisältö
         string = käsittele_negatiiviset(string)
-        print(string)
 
         for i, char in enumerate(string):
 
