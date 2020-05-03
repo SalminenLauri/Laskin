@@ -64,7 +64,7 @@ def laske(string):
             string = string[:i + 1] + "*" + string[i + 1:]
         elif string[i] == "(" and string[i - 1] not in operators and string[i - 1] != "(":
             string = string[:i] + "*" + string[i:]
-    def käsittele_negatiiviset(string):  # vyöryttää kerto tai jakolaskua seuraavan miinuksen laskun eteen
+    def kasittele_negatiiviset(string):  # vyöryttää kerto tai jakolaskua seuraavan miinuksen laskun eteen
         while True:
             string = string.replace("*+", "*").replace("/+", "+")
             string = string.replace("+-", "-").replace("-+", "-").replace("--", "+").replace("++", "+")
@@ -96,7 +96,7 @@ def laske(string):
 
     #Sulut toimivat nyt.
     while True:  # poistetaan sulut yksi kerrallaan laskemalla sulkujen sisältö
-        string = käsittele_negatiiviset(string)
+        string = kasittele_negatiiviset(string)
 
         for i, char in enumerate(string):
 
